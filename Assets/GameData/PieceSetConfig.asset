@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a8898ae593a74966a0f4a2b0236c5eb, type: 3}
+  m_Name: PieceSetConfig
+  m_EditorClassIdentifier: Assembly-CSharp::NumbersBlast.Data.PieceSetConfig
+  shapes:
+  - {fileID: 11400000, guid: 64a2a7b18ff7a424f9d12054f4ad2941, type: 2}
+  - {fileID: 11400000, guid: 86a8e58c6c4d24d4fb7c3675a43a8ab9, type: 2}
+  - {fileID: 11400000, guid: 4880c7fed13014eab9670662d8f78bd4, type: 2}
+  - {fileID: 11400000, guid: 7e69e1762b44941b6baac00d26255000, type: 2}
+  - {fileID: 11400000, guid: d346970987f004eb790a9bb17dc45f3b, type: 2}
+  - {fileID: 11400000, guid: 61f21d23b8ab94c718a7330a35e6a2eb, type: 2}
+  - {fileID: 11400000, guid: 92a91bb611922417094b7405e1054b48, type: 2}
+  - {fileID: 11400000, guid: 2902a3af8508b4fa29c393dd047a3367, type: 2}
+  - {fileID: 11400000, guid: b6429b664ddcf4b20b02c203e328bd48, type: 2}
+  - {fileID: 11400000, guid: 96ed2adc44ba24e608f7076d5972b8b7, type: 2}
