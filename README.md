@@ -1,6 +1,6 @@
 # Numbers Blast
 
-Mavis **Senior Game Developer Case** için geliştirilmiş, Block Blast tarzında bir sayı birleştirme
+Mavis Games **Senior Game Developer Case** için geliştirilmiş, Block Blast tarzında bir sayı birleştirme
 bulmaca oyunu. Bloklar 1–4 arası sayılar taşır; yerleştirilen bir blok, kendisiyle aynı değerdeki
 komşularını yutar (değerlerin toplamı alınır, zincirleme tepkimelerle) ve tamamen dolan
 satırlar/sütunlar temizlenerek puan kazandırır. Bölüm 1 (çekirdek oyun) tamamlandı; opsiyonel
@@ -26,7 +26,7 @@ Bölüm 2 (inandırıcı bir yapay zekâya karşı sahte gerçek zamanlı çok o
 Tek assembly; klasörler namespace'lerle 1:1 eşleşir.
 
 ```
-Core          Değişmez (immutable) veriler + enum'lar (MoveResult, MergeStep, GameState, …)
+Core          Immutable veriler + enum'lar (MoveResult, MergeStep, GameState, …)
 Data          ScriptableObject'ler (tahta yapılandırması, parça şekilleri, öğretici adımları)
 Gameplay      Saf mantık, UI'dan bağımsız: BoardModel, TrayModel, PlacementService,
               MergeResolver, LineClearResolver, ScoreService, PieceFactory
@@ -34,15 +34,15 @@ App           Composition root: GameSessionController + odaklanmış oturum yard
               (SessionHud, GameOverSequence, InputGate) + PlayerProgress
 Presentation  Tahta/parça/tepsi görünümleri, animasyonlar, ortak yerleştirme önizlemesi
 Input         PieceDragController (UGUI pointer olayları — fare ve dokunmatik tek yolu paylaşır)
-UI            Menü, skor tablosu, tur/zamanlayıcı, öğretici katmanı, oyun sonu, eşleştirme
+UI            Menü, skor tablosu, tur/zamanlayıcı, öğretici katmanı, oyun sonu, matchmaking
 Tutorial      3 adımlı zorunlu öğretici denetleyicisi
 Opponent      TurnController (tek maç döngüsü), tur zamanlayıcısı, hamle değerlendirici,
               eylem planlayıcı, insansı sunum
 Settings      SFX / müzik / titreşim + ayarlar paneli
 ```
 
-**Tek boru hattı.** `PlacementService.ApplyMove(board, piece, anchor)` — parçayı yerleştir, tüm
-birleşmeleri çözümle, ardından dolu satırları/sütunları temizle — tek doğruluk kaynağıdır; canlı
+**Tek pipeline.** `PlacementService.ApplyMove(board, piece, anchor)` — parçayı yerleştir, tüm
+birleşmeleri çözümle, ardından dolu satırları/sütunları temizle — single source of truth'tur; canlı
 sürükleme önizlemesi (geçici bir çalışma tahtası üzerinde), gerçek hamle, yapay zekânın aday
 değerlendirmesi ve oyun sonu (fail-state) kontrolü hep bunu kullanır. Önizleme, yapay zekâ ve
 gerçek hamle asla birbirinden farklı sonuç veremez. Saf `Gameplay` katmanı hiçbir UI veya input
@@ -65,8 +65,8 @@ tipine referans vermez; dolayısıyla mantık sınırı teamülle değil, namesp
   tepsiden bir parça alır, aday hücrelerin üzerinde gezinir, duraksar, ara sıra yanlış yere bırakıp
   yeniden dener, sonra yerleştirir.
 - **Yapay zekâ mükemmel hamleler değil, iyi hamleler yapmaya çalışır.** Her aday hamle aynı hamle
-  boru hattıyla puanlanır; ardından en iyi adaylar arasından yapılan ağırlıklı-rastgele seçim onu
-  insansı tutar. Maç içi bir lastik bant (rubber-band) mekanizması, bu seçim aralığını anlık skor
+  pipeline'ıyla puanlanır; ardından en iyi adaylar arasından yapılan ağırlıklı-rastgele seçim onu
+  insansı tutar. Maç içi bir rubber-band mekanizması, bu seçim aralığını anlık skor
   farkına göre genişletir ya da daraltır, böylece maçlar başa baş kalır; bariz biçimde en iyi hamle
   (bir satır/sütun temizleme) asla kaçırılmaz ve yapay zekâ, gerçekte yapacağı hamleden daha iyi
   görünecek bir hücre üzerinde asla sahte gezinme yapmaz.
@@ -90,4 +90,4 @@ tipine referans vermez; dolayısıyla mantık sınırı teamülle değil, namesp
 - Yapay zekânın rubber-band eşiğine bağlanmış bir zorluk seçici (eşik zaten Inspector'dan
   ayarlanabilir).
 - Rakibin tur süresine isteğe bağlı kesin bir üst sınır.
-- Uçan puan etiketleri için nesne havuzlama (temizleme parıltıları zaten havuzlanıyor).
+- Uçan puan etiketleri için pooling (temizleme parıltıları zaten pool'lanıyor).
