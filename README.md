@@ -1,10 +1,9 @@
 # Numbers Blast
 
-Mavis **Senior Game Developer Case** için geliştirilmiş, Block Blast tarzı sayı-birleştirmeli
-bulmaca. Bloklar 1–4 değer taşır; yerleştirilen blok, eş değerli komşularını kendine katar
+Block Blast tarzı, sayı birleştirmeli bir bulmaca prototipi. Bloklar 1–4 değer taşır; yerleştirilen blok, eş değerli komşularını kendine katar
 (toplamları olur, zincirleme devam eder), dolan satır/sütunlar temizlenip skor verir.
-Part 1 (zorunlu çekirdek oyun) tamam; opsiyonel Part 2 (inandırıcı bir AI rakibe karşı sahte
-gerçek-zamanlı multiplayer) uygulanmıştır.
+Çekirdek oyunun yanında, inandırıcı bir AI rakibe karşı sahte gerçek-zamanlı bir
+multiplayer modu da içerir.
 
 <p align="center">
   <img src="Docs/menu.png" width="180">&nbsp;
