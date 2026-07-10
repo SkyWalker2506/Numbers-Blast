@@ -19,7 +19,7 @@ Bölüm 2 (inandırıcı bir yapay zekâya karşı sahte gerçek zamanlı çok o
 
 1. Bu depoyu **Unity 6000.3.8f1** ile açın.
 2. `Assets/Scenes/Game.unity` sahnesini açın ve **Play** tuşuna basın.
-3. Testler: *Window ▸ General ▸ Test Runner* — 24 EditMode + 5 PlayMode, tümü geçiyor.
+3. Testler: *Window ▸ General ▸ Test Runner* — 23 EditMode + 5 PlayMode, tümü geçiyor.
 
 ## Mimari
 
@@ -60,10 +60,10 @@ tipine referans vermez; dolayısıyla mantık sınırı teamülle değil, namesp
   boşaldığında yeniden dolar.
 - **Bölüm 2, küçük tutarlılıklardan örülmüş bir illüzyondur:** ortak tahta ve tepsi, sahte bir
   "Finding opponent…" bağlanma ekranı, **her iki turda da görünür 20 saniyelik geri sayım** ile
-  dönüşümlü turlar (rakibinki kendi renk tonunda akar), ekranda beliren "Time's up! −5%"
-  uyarısıyla %5'lik süre aşımı cezası ve tamamen ekran üzerinde oynayan bir rakip — ortak
-  tepsiden bir parça alır, aday hücrelerin üzerinde gezinir, duraksar, ara sıra yanlış yere bırakıp
-  yeniden dener, sonra yerleştirir.
+  dönüşümlü turlar (rakibinki kendi renk tonunda akar), süre dolduğunda puan cezası olmadan —
+  sesli bir uyarı eşliğinde — sıranın rakibe geçmesi ve tamamen ekran üzerinde oynayan bir
+  rakip — ortak tepsiden bir parça alır, aday hücrelerin üzerinde gezinir, duraksar, ara sıra
+  yanlış yere bırakıp yeniden dener, sonra yerleştirir.
 - **Yapay zekâ mükemmel hamleler değil, iyi hamleler yapmaya çalışır.** Her aday hamle aynı hamle
   pipeline'ıyla puanlanır; ardından en iyi adaylar arasından yapılan ağırlıklı-rastgele seçim onu
   insansı tutar. Maç içi bir rubber-band mekanizması, bu seçim aralığını anlık skor

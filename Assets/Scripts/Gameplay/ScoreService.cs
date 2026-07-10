@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace NumbersBlast.Gameplay
 {
@@ -21,17 +20,6 @@ namespace NumbersBlast.Gameplay
             }
 
             _score += amount;
-            ScoreChanged?.Invoke(_score);
-        }
-
-        /// <summary>
-        /// Applies a percentage penalty of the current score, floored, clamped to a minimum of 0.
-        /// Example: 5% of 47 -> floor(2.35) = 2 removed.
-        /// </summary>
-        public void ApplyPenaltyPercent(float percent)
-        {
-            int penalty = Mathf.FloorToInt(_score * percent);
-            _score = Mathf.Max(0, _score - penalty);
             ScoreChanged?.Invoke(_score);
         }
 

@@ -9,7 +9,7 @@ using NumbersBlast.UI;
 namespace NumbersBlast.Opponent
 {
     /// <summary>
-    /// Drives Part 2 turn order, the 20s player timer, timeout penalty, and the opponent turn.
+    /// Drives Part 2 turn order, the 20s player timer, the timeout pass, and the opponent turn.
     /// Core gameplay never references this; the session exposes a small API this controller uses.
     /// </summary>
     public sealed class TurnController : MonoBehaviour
@@ -96,17 +96,17 @@ namespace NumbersBlast.Opponent
 
                 if (_timedOut && !_moveStarted)
                 {
-                    // True timeout — no move was made: cancel any half-finished drag, apply the penalty,
-                    // pass the turn (board unchanged, so no resolve to wait for).
+                    // True timeout — no move was made: cancel any half-finished drag and pass the
+                    // turn without a score penalty (board unchanged, so no resolve to wait for).
                     _session.CancelActiveDrag();
-                    _session.ApplyTimeoutPenalty(PlayerSide.Local);
+                    _session.NotifyTurnTimedOut();
                     turnTimer.Stop();
                 }
                 else if (!_moveResolved)
                 {
                     // A move was committed in the same frame the timer expired (the Update order between
                     // the timer and the EventSystem is unspecified, so both flags can be raised in one
-                    // frame). The move wins — no penalty; just wait for its resolve like a normal turn.
+                    // frame). The move wins — no pass; just wait for its resolve like a normal turn.
                     yield return new WaitUntil(() => _moveResolved || !_active);
                     if (!_active) yield break;
                 }
@@ -190,7 +190,7 @@ namespace NumbersBlast.Opponent
         {
             if (_active && CurrentTurn == PlayerSide.Local)
             {
-                _timedOut = true;   // MatchLoop handles cancel + penalty + pass
+                _timedOut = true;   // MatchLoop handles cancel + pass
             }
         }
 
