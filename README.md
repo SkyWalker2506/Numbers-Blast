@@ -1,9 +1,10 @@
 # Numbers Blast
 
-A Block Blast–style number-merge puzzle built for the Mavis **Senior Game Developer Case**.
-Blocks carry numbers 1–4; a placed block absorbs its equal-valued neighbours (their sum, with
-chain reactions), and full rows/columns clear for score. Part 1 (core game) is complete and
-optional Part 2 (fake real-time multiplayer vs a believable AI) is implemented.
+Mavis **Senior Game Developer Case** için geliştirilmiş, Block Blast tarzında bir sayı birleştirme
+bulmaca oyunu. Bloklar 1–4 arası sayılar taşır; yerleştirilen bir blok, kendisiyle aynı değerdeki
+komşularını yutar (değerlerin toplamı alınır, zincirleme tepkimelerle) ve tamamen dolan
+satırlar/sütunlar temizlenerek puan kazandırır. Bölüm 1 (çekirdek oyun) tamamlandı; opsiyonel
+Bölüm 2 (inandırıcı bir yapay zekâya karşı sahte gerçek zamanlı çok oyunculu mod) de uygulandı.
 
 <p align="center">
   <img src="Docs/menu.png" width="180">&nbsp;
@@ -12,74 +13,81 @@ optional Part 2 (fake real-time multiplayer vs a believable AI) is implemented.
   <img src="Docs/vsai.png" width="180">
 </p>
 
-**Engine:** Unity 6000.3.8f1 (6.3 LTS), UGUI + TextMeshPro, new Input System · **Target:** Android, portrait (runs with mouse in the Editor).
+**Motor:** Unity 6000.3.8f1 (6.3 LTS), UGUI + TextMeshPro, yeni Input System · **Hedef:** Android, dikey (portrait) — Editör'de fare ile çalışır.
 
-## How to run
+## Nasıl çalıştırılır
 
-1. Open this repository in **Unity 6000.3.8f1**.
-2. Open `Assets/Scenes/Game.unity` and press **Play**.
-3. Tests: *Window ▸ General ▸ Test Runner* — 24 EditMode + 5 PlayMode, all passing.
+1. Bu depoyu **Unity 6000.3.8f1** ile açın.
+2. `Assets/Scenes/Game.unity` sahnesini açın ve **Play** tuşuna basın.
+3. Testler: *Window ▸ General ▸ Test Runner* — 24 EditMode + 5 PlayMode, tümü geçiyor.
 
-## Architecture
+## Mimari
 
-One assembly; folders mirror namespaces 1:1.
+Tek assembly; klasörler namespace'lerle 1:1 eşleşir.
 
 ```
-Core          Immutable data + enums (MoveResult, MergeStep, GameState, …)
-Data          ScriptableObjects (board config, piece shapes, tutorial steps)
-Gameplay      Pure logic, UI-free: BoardModel, TrayModel, PlacementService,
+Core          Değişmez (immutable) veriler + enum'lar (MoveResult, MergeStep, GameState, …)
+Data          ScriptableObject'ler (tahta yapılandırması, parça şekilleri, öğretici adımları)
+Gameplay      Saf mantık, UI'dan bağımsız: BoardModel, TrayModel, PlacementService,
               MergeResolver, LineClearResolver, ScoreService, PieceFactory
-App           Composition root: GameSessionController + focused session helpers
+App           Composition root: GameSessionController + odaklanmış oturum yardımcıları
               (SessionHud, GameOverSequence, InputGate) + PlayerProgress
-Presentation  Board/piece/tray views, animations, shared placement preview
-Input         PieceDragController (UGUI pointer events — mouse and touch share one path)
-UI            Menu, scoreboard, turn/timer, tutorial overlay, game-over, matchmaking
-Tutorial      3-step forced tutorial controller
-Opponent      TurnController (single match loop), turn timer, move evaluator,
-              act planner, human-like presentation
-Settings      SFX / music / vibration + settings panel
+Presentation  Tahta/parça/tepsi görünümleri, animasyonlar, ortak yerleştirme önizlemesi
+Input         PieceDragController (UGUI pointer olayları — fare ve dokunmatik tek yolu paylaşır)
+UI            Menü, skor tablosu, tur/zamanlayıcı, öğretici katmanı, oyun sonu, eşleştirme
+Tutorial      3 adımlı zorunlu öğretici denetleyicisi
+Opponent      TurnController (tek maç döngüsü), tur zamanlayıcısı, hamle değerlendirici,
+              eylem planlayıcı, insansı sunum
+Settings      SFX / müzik / titreşim + ayarlar paneli
 ```
 
-**The one pipeline.** `PlacementService.ApplyMove(board, piece, anchor)` — place, resolve all
-merges, then clear full lines — is the single source of truth, used by the live drag preview
-(on a scratch board), the real move, the AI's candidate evaluation, and the fail-state check.
-Preview, AI and reality can never disagree. The pure `Gameplay` layer never references UI or
-input types, so the logic boundary is enforced by namespace, not convention.
+**Tek boru hattı.** `PlacementService.ApplyMove(board, piece, anchor)` — parçayı yerleştir, tüm
+birleşmeleri çözümle, ardından dolu satırları/sütunları temizle — tek doğruluk kaynağıdır; canlı
+sürükleme önizlemesi (geçici bir çalışma tahtası üzerinde), gerçek hamle, yapay zekânın aday
+değerlendirmesi ve oyun sonu (fail-state) kontrolü hep bunu kullanır. Önizleme, yapay zekâ ve
+gerçek hamle asla birbirinden farklı sonuç veremez. Saf `Gameplay` katmanı hiçbir UI veya input
+tipine referans vermez; dolayısıyla mantık sınırı teamülle değil, namespace ile güvence altına alınmıştır.
 
-## Choices
+## Tasarım tercihleri
 
-- **Merge before clear**, in a fixed order: write the piece → resolve merges (4-neighbour,
-  chaining) → evaluate line clears. A merge can un-fill a line that looked complete — that is
-  the rule, and the preview shows it. Merges score nothing; clears score the sum of unique
-  cleared values (a row∩column cell counts once).
-- **Piece spawning** never puts equal values on adjacent cells inside one piece, so a piece
-  can't self-merge on spawn. Tray holds 3 pieces and refills only when empty.
-- **Part 2 is an illusion built from small consistencies:** shared board and tray, a fake
-  "Finding opponent…" connect, alternating turns with a **visible 20-second countdown on both
-  turns** (the opponent's runs in its own tint), a 5% timeout penalty with an on-screen
-  "Time's up! −5%" flash, and an opponent that plays entirely on-screen — it picks a piece
-  up from the shared tray, hovers candidate cells, hesitates, occasionally misdrops and
-  retries, then places.
-- **The AI tries to make good moves, not perfect ones.** Every candidate is scored with the
-  same move pipeline, then a weighted-random pick over the top candidates keeps it human. An
-  in-match rubber-band widens or narrows that selection by the current score gap, so matches
-  stay close; an obviously best move (a line clear) is never passed up, and the AI never fakes
-  a hover over a cell that would look better than the move it actually makes.
-- **Settings never pause the match** — like a real online opponent, the clock keeps running;
-  the panel only locks your own input.
-- No DI framework, no service locator, no event bus, no unused interfaces — at this scope
-  they would be ceremony. Every class in the project is referenced.
+- **Önce birleştir, sonra temizle** — sabit bir sırayla: parçayı yaz → birleşmeleri çözümle
+  (4 komşulu, zincirleme) → satır/sütun temizlemelerini değerlendir. Bir birleşme, tamamlanmış
+  görünen bir satırı yeniden boşaltabilir — kural budur ve önizleme de bunu gösterir. Birleşmeler
+  puan getirmez; temizlemeler, temizlenen benzersiz değerlerin toplamı kadar puan getirir
+  (satır∩sütun kesişimindeki hücre yalnızca bir kez sayılır).
+- **Parça üretimi**, bir parçanın içindeki komşu hücrelere asla eşit değerler koymaz; böylece bir
+  parça doğduğu anda kendi kendine birleşemez. Tepsi 3 parça tutar ve yalnızca tamamen
+  boşaldığında yeniden dolar.
+- **Bölüm 2, küçük tutarlılıklardan örülmüş bir illüzyondur:** ortak tahta ve tepsi, sahte bir
+  "Finding opponent…" bağlanma ekranı, **her iki turda da görünür 20 saniyelik geri sayım** ile
+  dönüşümlü turlar (rakibinki kendi renk tonunda akar), ekranda beliren "Time's up! −5%"
+  uyarısıyla %5'lik süre aşımı cezası ve tamamen ekran üzerinde oynayan bir rakip — ortak
+  tepsiden bir parça alır, aday hücrelerin üzerinde gezinir, duraksar, ara sıra yanlış yere bırakıp
+  yeniden dener, sonra yerleştirir.
+- **Yapay zekâ mükemmel hamleler değil, iyi hamleler yapmaya çalışır.** Her aday hamle aynı hamle
+  boru hattıyla puanlanır; ardından en iyi adaylar arasından yapılan ağırlıklı-rastgele seçim onu
+  insansı tutar. Maç içi bir lastik bant (rubber-band) mekanizması, bu seçim aralığını anlık skor
+  farkına göre genişletir ya da daraltır, böylece maçlar başa baş kalır; bariz biçimde en iyi hamle
+  (bir satır/sütun temizleme) asla kaçırılmaz ve yapay zekâ, gerçekte yapacağı hamleden daha iyi
+  görünecek bir hücre üzerinde asla sahte gezinme yapmaz.
+- **Ayarlar maçı asla duraklatmaz** — gerçek bir çevrimiçi rakipte olduğu gibi saat işlemeye devam
+  eder; panel yalnızca sizin girdinizi kilitler.
+- DI framework'ü yok, service locator yok, event bus yok, kullanılmayan interface yok — bu ölçekte
+  hepsi gereksiz tören olurdu. Projedeki her sınıf fiilen kullanılmaktadır.
 
-## Known issues / notes
+## Bilinen sorunlar / notlar
 
-- The 3-step tutorial runs on first launch only (persisted); it can be replayed from the menu.
-- Merged values beyond the authored 8-colour palette get a stable golden-ratio hue, so high
-  merges stay distinct and readable.
-- The opponent's turn typically takes ~3–4 seconds; unlucky rolls can stretch it a few seconds
-  more, but its action list is finite and always finishes well inside the 20s countdown.
+- 3 adımlı öğretici yalnızca ilk açılışta çalışır (kalıcı olarak kaydedilir); menüden yeniden
+  oynatılabilir.
+- Elle tanımlanmış 8 renkli paletin ötesine geçen birleşmiş değerler, altın orana dayalı sabit bir
+  renk tonu alır; böylece yüksek birleşme değerleri ayırt edilebilir ve okunur kalır.
+- Rakibin turu genellikle ~3–4 saniye sürer; şanssız rastgele atışlar bunu birkaç saniye daha
+  uzatabilir, ancak eylem listesi sonludur ve her zaman 20 saniyelik geri sayımın rahatça içinde
+  tamamlanır.
 
-## Future improvements
+## Gelecekteki iyileştirmeler
 
-- A difficulty selector mapped to the AI's rubber-band threshold (already inspector-tunable).
-- An optional hard cap on the opponent's turn length.
-- Pooling for the floating score labels (clear glows are already pooled).
+- Yapay zekânın rubber-band eşiğine bağlanmış bir zorluk seçici (eşik zaten Inspector'dan
+  ayarlanabilir).
+- Rakibin tur süresine isteğe bağlı kesin bir üst sınır.
+- Uçan puan etiketleri için nesne havuzlama (temizleme parıltıları zaten havuzlanıyor).
