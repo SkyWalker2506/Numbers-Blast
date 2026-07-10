@@ -77,7 +77,7 @@ namespace ile korunur.
 - 3 adımlı tutorial yalnızca ilk açılışta çalışır (kalıcı kayıt); menüden tekrar oynatılabilir.
 - 8 renklik paletin ötesindeki merge değerleri kararlı bir golden-ratio tonu alır — yüksek
   merge'ler ayırt edilebilir ve okunur kalır.
-- Rakibin turu tipik olarak ~3–4 saniye sürer; şanssız zarlarda birkaç saniye uzayabilir,
+- Rakibin turu tipik olarak ~4–5 saniye sürer; şanssız zarlarda birkaç saniye uzayabilir,
   ancak eylem listesi sonludur ve her zaman gösterdiği 20 saniyelik sayacın çok içinde biter.
 
 ## Gelecek geliştirmeler

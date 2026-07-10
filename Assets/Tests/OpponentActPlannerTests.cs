@@ -68,7 +68,8 @@ namespace NumbersBlast.Tests
             var placement = NewPlacement();
             var piece = OneCell(1);
             var move = new OpponentMove(piece, new Vector2Int(3, 3), 0f);
-            var planner = new OpponentActPlanner(1, 4, 0.5f, 3f, 0.6f, 1f, 0f, new System.Random(7));   // misdrop forced
+            // maxAttempts=1 keeps the fake budget open so the forced misdrop can always spend it.
+            var planner = new OpponentActPlanner(1, 1, 0.5f, 3f, 0.6f, 1f, 0f, new System.Random(7));   // misdrop forced
 
             List<OpponentBeat> beats = planner.Plan(board, placement, move);
 

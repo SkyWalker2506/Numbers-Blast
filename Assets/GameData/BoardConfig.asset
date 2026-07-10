@@ -15,7 +15,7 @@ MonoBehaviour:
   width: 8
   height: 8
   trayPieceCount: 3
-  cellSize: 120
+  cellSize: 108
   timeoutPenaltyPercent: 0.05
   emptyCellColor: {r: 0.16, g: 0.19, b: 0.3, a: 1}
   valueColors:

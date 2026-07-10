@@ -22,8 +22,8 @@ namespace NumbersBlast.Opponent
         [SerializeField] private float dragYOffset = 45f;
         [SerializeField] private float hoverHesitation = 0.5f;
         [Tooltip("Random think-time before the opponent touches a piece, so it never moves instantly.")]
-        [SerializeField] private float preMoveDelayMin = 0.6f;
-        [SerializeField] private float preMoveDelayMax = 1.7f;
+        [SerializeField] private float preMoveDelayMin = 1.6f;
+        [SerializeField] private float preMoveDelayMax = 2.7f;
         [Tooltip("Idle bob amplitude (px) while the opponent hovers a cell, so it never sits perfectly still.")]
         [SerializeField] private float bobAmount = 7f;
         [Tooltip("How much the travel path bows sideways (fraction of distance) for a non-robotic arc.")]

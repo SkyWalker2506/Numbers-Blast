@@ -63,6 +63,10 @@ namespace NumbersBlast.Opponent
             // into 0 (obvious — beeline to the cell) .. 1 (deliberates over candidates).
             float torn = Mathf.InverseLerp(0.7f, 1.15f, thinkScale);
 
+            // One shared budget for every kind of fake (swap pickup, decoy tries, misdrop): at most
+            // 3 per turn, with a rare (5%) indulgent 4th — a whole act never drags past that.
+            int fakeBudget = Value01 < 0.05f ? 4 : 3;
+
             // Reach for a DIFFERENT piece first only when genuinely thinking — considering the wrong
             // piece while an obvious move is on the board would read as blind, not human. The
             // considered cell obeys the same honesty rule: never one that previews better than the
@@ -76,6 +80,7 @@ namespace NumbersBlast.Opponent
                     if (cell.HasValue)
                     {
                         beats.Add(OpponentBeat.SwapFakeout(other, cell.Value, _hoverHesitation * RangeF(0.9f, 1.4f)));
+                        fakeBudget--;
                     }
                 }
             }
@@ -85,10 +90,12 @@ namespace NumbersBlast.Opponent
             // Decoy count scales with how torn the decision was: an obvious move gets 0 tries (grab
             // it and go), a close call always deliberates at least once. Jitter inside that band
             // keeps it organic without ever contradicting the situation.
-            int ceiling = Mathf.Min(_maxAttempts, Mathf.RoundToInt(torn * _maxAttempts));
+            int ceiling = Mathf.Min(Mathf.Min(_maxAttempts, fakeBudget),
+                Mathf.RoundToInt(torn * _maxAttempts));
             int floorAttempts = Mathf.Clamp(torn > 0.75f ? 1 : _minAttempts, 0, ceiling);
             int attempts = RangeI(floorAttempts, ceiling + 1);
             List<Vector2Int> decoys = CollectTryCells(board, placement, move, attempts, chosen);
+            fakeBudget -= decoys.Count;
 
             if (attempts == 0)
             {
@@ -125,8 +132,9 @@ namespace NumbersBlast.Opponent
                 }
             }
 
-            // Rarely, one attempt is a genuine invalid drop that bounces back before settling.
-            if (decoys.Count > 0 && Value01 < _misdropChance)
+            // Rarely, one attempt is a genuine invalid drop that bounces back before settling —
+            // only if the fake budget still allows it.
+            if (decoys.Count > 0 && fakeBudget > 0 && Value01 < _misdropChance)
             {
                 Vector2Int? wrong = FindInvalidCell(board, placement, move);
                 if (wrong.HasValue)
