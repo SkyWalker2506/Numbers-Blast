@@ -9,6 +9,8 @@ namespace NumbersBlast.Data
         [SerializeField] private int height = 8;
         [SerializeField] private int trayPieceCount = 3;
         [SerializeField] private float cellSize = 96f;
+        [Tooltip("Fraction of the current score lost on a turn timeout (Part 2). 0.05 = 5%.")]
+        [SerializeField] private float timeoutPenaltyPercent = 0.05f;
         [SerializeField] private Color emptyCellColor = new Color(0.12f, 0.14f, 0.20f, 1f);
 
         [Tooltip("Colors for cell values. Index 0 = value 1. Values above the array length clamp to the last color.")]
@@ -18,6 +20,7 @@ namespace NumbersBlast.Data
         public int Height => height;
         public int TrayPieceCount => trayPieceCount;
         public float CellSize => cellSize;
+        public float TimeoutPenaltyPercent => timeoutPenaltyPercent;
         public Color EmptyCellColor => emptyCellColor;
 
         /// <summary>
@@ -51,6 +54,7 @@ namespace NumbersBlast.Data
             height = Mathf.Clamp(height, 4, 12);
             trayPieceCount = Mathf.Clamp(trayPieceCount, 1, 3);   // the tray layout has 3 fixed slots
             cellSize = Mathf.Max(16f, cellSize);
+            timeoutPenaltyPercent = Mathf.Clamp01(timeoutPenaltyPercent);
         }
     }
 }

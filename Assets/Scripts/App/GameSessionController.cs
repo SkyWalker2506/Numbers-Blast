@@ -511,11 +511,10 @@ namespace NumbersBlast.App
             return _trayModel.Pieces;
         }
 
-        /// <summary>
-        /// Audible cue that the turn timer ran out; the turn simply passes, no score is deducted.
-        /// </summary>
-        public void NotifyTurnTimedOut()
+        public void ApplyTimeoutPenalty(PlayerSide side)
         {
+            ScoreService score = side == PlayerSide.Local ? _localScore : _opponentScore;
+            score.ApplyPenaltyPercent(boardConfig.TimeoutPenaltyPercent);
             if (sfxPlayer != null) sfxPlayer.PlayInvalid();
         }
 
@@ -580,7 +579,7 @@ namespace NumbersBlast.App
 
         // ---- Settings input lock -------------------------------------------
         // Deliberately NO timer pause in Vs AI: like a real online match, opening settings doesn't
-        // stop the clock — the turn can time out (and pass) while the panel is up.
+        // stop the clock — the turn can time out (penalty + pass) while the panel is up.
 
         private void OnSettingsOpened()
         {

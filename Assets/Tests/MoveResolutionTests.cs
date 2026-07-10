@@ -185,6 +185,20 @@ namespace NumbersBlast.Tests
         }
 
         [Test]
+        public void ScoreService_PenaltyFloorsAndClampsToZero()
+        {
+            var score = new ScoreService();
+            score.Add(47);
+            score.ApplyPenaltyPercent(0.05f); // floor(47 * 0.05) = 2
+            Assert.AreEqual(45, score.Score);
+
+            var small = new ScoreService();
+            small.Add(3);
+            small.ApplyPenaltyPercent(0.05f); // floor(0.15) = 0
+            Assert.AreEqual(3, small.Score);
+        }
+
+        [Test]
         public void HasAnyValidMove_FullBoard_ReturnsFalse()
         {
             var board = new BoardModel(3, 3);
