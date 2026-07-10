@@ -79,10 +79,15 @@ namespace NumbersBlast.Opponent
             int attempts = RangeI(_minAttempts, _maxAttempts + 1);
             List<Vector2Int> decoys = CollectTryCells(board, placement, move, attempts, chosen);
 
-            if (decoys.Count == 0)
+            if (attempts == 0)
             {
-                // No valid decoy to fake (board almost full) — drift to a nearby cell so it still reads
-                // as "thinking" rather than snapping straight to the target.
+                // A decisive turn, on purpose: no decoys — grab the piece and take it straight to
+                // its cell. Humans don't deliberate every single move.
+            }
+            else if (decoys.Count == 0)
+            {
+                // Decoys were WANTED but none exist (board almost full) — drift to a nearby cell so
+                // it still reads as "thinking" rather than snapping straight to the target.
                 var scan = new Vector2Int(
                     Mathf.Clamp(move.Anchor.x + RangeI(-2, 3), 0, board.Width - 1),
                     Mathf.Clamp(move.Anchor.y + RangeI(-1, 3), 0, board.Height - 1));

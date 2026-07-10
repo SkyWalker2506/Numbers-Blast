@@ -102,7 +102,17 @@ namespace NumbersBlast.Tests
             Assert.AreEqual(OpponentBeatType.SelectDelay, beats[0].Type);
             Assert.AreEqual(OpponentBeatType.FinalPlace, beats[beats.Count - 1].Type);
             Assert.AreEqual(move.Anchor, beats[beats.Count - 1].Cell);
+
+            // A decisive turn (0 attempts rolled): no decoys, no drift — pick up, go straight to the
+            // anchor, place. The single TravelTo must be the real anchor.
+            var direct = new OpponentActPlanner(0, 0, 0.5f, 1f, 0.5f, 0f, 0f, new System.Random(5));
+            List<OpponentBeat> directBeats = direct.Plan(board, placement, move);
+            List<Vector2Int> directTravels = Travels(directBeats);
+            Assert.AreEqual(1, directTravels.Count, "a 0-attempt turn travels once: straight to the anchor");
+            Assert.AreEqual(move.Anchor, directTravels[0]);
+            Assert.AreEqual(OpponentBeatType.FinalPlace, directBeats[directBeats.Count - 1].Type);
         }
+
         [Test]
         public void Planner_SwapFakeout_GrabsAnotherPieceThenStillPlaysTheRealAnchor()
         {

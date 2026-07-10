@@ -28,8 +28,9 @@ namespace NumbersBlast.Opponent
         [SerializeField] private float bobAmount = 7f;
         [Tooltip("How much the travel path bows sideways (fraction of distance) for a non-robotic arc.")]
         [SerializeField] private float pathCurve = 0.13f;
-        [Tooltip("Fewest fake 'try a cell' attempts the opponent makes before placing for real.")]
-        [SerializeField] private int minAttempts = 1;
+        [Tooltip("Fewest fake 'try a cell' attempts before placing. 0 = sometimes it just grabs the " +
+            "piece and takes it straight to its cell — decisive turns read as human as hesitant ones.")]
+        [SerializeField] private int minAttempts = 0;
         [Tooltip("Most fake 'try a cell' attempts (inclusive). Actual count is random in [min, max] each turn.")]
         [SerializeField] private int maxAttempts = 2;
         [Tooltip("Chance [0,1] of actually attempting an invalid drop first, bouncing back, then retrying (about 1 in 20 by default).")]
