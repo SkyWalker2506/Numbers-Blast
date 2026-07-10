@@ -130,7 +130,10 @@ namespace NumbersBlast.App
 
             switch (from)
             {
-                case GameState.PlayerTurn:    return to == GameState.ResolvingMove;
+                // A player turn ends with a move (→ Resolving) — or with a TIMEOUT, which passes the
+                // turn with no resolve (→ OpponentTurn) or ends the match if no moves remain (→ GameOver).
+                case GameState.PlayerTurn:    return to == GameState.ResolvingMove
+                                                  || to == GameState.OpponentTurn || to == GameState.GameOver;
                 case GameState.ResolvingMove: return to == GameState.OpponentTurn || to == GameState.GameOver;
                 case GameState.OpponentTurn:  return to == GameState.ResolvingMove || to == GameState.GameOver;
                 default:                      return false;
