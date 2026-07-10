@@ -9,7 +9,8 @@ using NumbersBlast.UI;
 namespace NumbersBlast.Opponent
 {
     /// <summary>
-    /// Drives Part 2 turn order, the 20s player timer, timeout penalty, and the opponent turn.
+    /// Drives Part 2 turn order, the 20s turn timer (visible on both turns), timeout penalty,
+    /// and the opponent turn.
     /// Core gameplay never references this; the session exposes a small API this controller uses.
     /// </summary>
     public sealed class TurnController : MonoBehaviour
@@ -147,6 +148,7 @@ namespace NumbersBlast.Opponent
         {
             CurrentTurn = PlayerSide.Local;
             turnView.SetTurn(PlayerSide.Local);
+            timerView.SetOwner(PlayerSide.Local);
             timerView.SetVisible(true);
             _session.EnterPlayerTurn();
             turnTimer.StartCountdown(playerTurnSeconds);
@@ -156,8 +158,14 @@ namespace NumbersBlast.Opponent
         {
             CurrentTurn = PlayerSide.Opponent;
             turnView.SetTurn(PlayerSide.Opponent);
-            timerView.SetVisible(false);
+            // The countdown stays visible on the opponent's turn too (in its own tint) — both sides
+            // play under the same visible 20s clock. OnTimeout ignores the opponent side, and its
+            // finite act list always commits well inside the countdown, freezing the bar via
+            // OnMoveStarted exactly like a player move does.
+            timerView.SetOwner(PlayerSide.Opponent);
+            timerView.SetVisible(true);
             _session.EnterOpponentTurn();
+            turnTimer.StartCountdown(playerTurnSeconds);
         }
 
         private void OnMoveStarted(PlayerSide side)

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using NumbersBlast.Core;
 
 namespace NumbersBlast.UI
 {
@@ -9,11 +10,22 @@ namespace NumbersBlast.UI
         [SerializeField] private TMP_Text valueText;
         [SerializeField] private Image fillBar;
         [SerializeField] private Color normalColor = new Color(0.4f, 0.8f, 1f);
+        [Tooltip("Bar tint while the opponent's countdown is running, so the two turns read apart at a glance.")]
+        [SerializeField] private Color opponentColor = new Color(1f, 0.66f, 0.32f);
         [SerializeField] private Color warningColor = new Color(1f, 0.4f, 0.35f);
 
         // Cache the last shown second so the text (and its string allocation) only updates
         // once per second instead of every frame the timer ticks.
         private int _lastShownSecond = -1;
+        private bool _opponentOwned;
+
+        /// <summary>
+        /// Tints the countdown for whichever side's turn is running (the opponent's gets its own tint).
+        /// </summary>
+        public void SetOwner(PlayerSide side)
+        {
+            _opponentOwned = side == PlayerSide.Opponent;
+        }
 
         public void SetVisible(bool visible)
         {
@@ -41,7 +53,7 @@ namespace NumbersBlast.UI
                 Vector2 max = rt.anchorMax;
                 max.x = ratio;
                 rt.anchorMax = max;
-                fillBar.color = ratio < 0.3f ? warningColor : normalColor;
+                fillBar.color = ratio < 0.3f ? warningColor : (_opponentOwned ? opponentColor : normalColor);
             }
         }
     }
