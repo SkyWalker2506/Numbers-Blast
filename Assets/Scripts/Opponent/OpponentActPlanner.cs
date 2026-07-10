@@ -58,10 +58,16 @@ namespace NumbersBlast.Opponent
             _simBoard.CopyFrom(board);
             MoveResult chosen = placement.ApplyMove(_simBoard, move.Piece, move.Anchor);
 
-            // Occasionally reach for a DIFFERENT piece first, consider a cell, then put it back and
-            // take the real one — the most literal form of the brief's "cancel" beat. The considered
-            // cell obeys the same honesty rule: never one that would preview better than the real move.
-            if (trayPieces != null && Value01 < _swapFakeoutChance)
+            // Decisiveness follows CONFIDENCE, not dice: thinkScale < 1 means the evaluator found a
+            // clearly best move (big top-2 gap), ~1.15 means a genuine close call. "torn" turns that
+            // into 0 (obvious — beeline to the cell) .. 1 (deliberates over candidates).
+            float torn = Mathf.InverseLerp(0.7f, 1.15f, thinkScale);
+
+            // Reach for a DIFFERENT piece first only when genuinely thinking — considering the wrong
+            // piece while an obvious move is on the board would read as blind, not human. The
+            // considered cell obeys the same honesty rule: never one that previews better than the
+            // real move.
+            if (trayPieces != null && torn > 0.5f && Value01 < _swapFakeoutChance)
             {
                 PieceInstance other = PickOtherPiece(trayPieces, move.Piece);
                 if (other != null)
@@ -76,7 +82,12 @@ namespace NumbersBlast.Opponent
 
             beats.Add(OpponentBeat.SelectDelay(RangeF(_preMoveDelayMin, _preMoveDelayMax) * thinkScale));
 
-            int attempts = RangeI(_minAttempts, _maxAttempts + 1);
+            // Decoy count scales with how torn the decision was: an obvious move gets 0 tries (grab
+            // it and go), a close call always deliberates at least once. Jitter inside that band
+            // keeps it organic without ever contradicting the situation.
+            int ceiling = Mathf.Min(_maxAttempts, Mathf.RoundToInt(torn * _maxAttempts));
+            int floorAttempts = Mathf.Clamp(torn > 0.75f ? 1 : _minAttempts, 0, ceiling);
+            int attempts = RangeI(floorAttempts, ceiling + 1);
             List<Vector2Int> decoys = CollectTryCells(board, placement, move, attempts, chosen);
 
             if (attempts == 0)

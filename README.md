@@ -60,7 +60,7 @@ namespace ile korunur.
   sahte "Finding opponent…" ekranı, **iki turda da görünen 20 saniyelik geri sayım** (rakibinki
   kendi renginde), ekranda "Time's up! −5%" uyarısıyla görünür timeout cezası ve tamamen
   ekran üzerinde oynayan bir rakip: taşı ortak tray'den alır, hücrelerde gezdirir, tereddüt
-  eder (bazen de hiç oyalanmadan doğrudan yerine koyar), ara sıra yanlış bırakıp geri alır — hatta bazen **yanlış taşı alıp, düşünüp, vazgeçip
+  eder (bariz hamle gördüğünde hiç oyalanmadan doğrudan yerine koyar; yakın kararlarda düşünür), ara sıra yanlış bırakıp geri alır — hatta bazen **yanlış taşı alıp, düşünüp, vazgeçip
   yerine koyar** ve asıl taşa uzanır — sonra yerleştirir.
 - **AI iyi hamle yapmaya çalışır, kusursuz olmaya değil.** Her aday aynı hamle pipeline'ıyla
   puanlanır; en iyiler arasından ağırlıklı-rastgele seçim onu insansı kılar. Maç içi
